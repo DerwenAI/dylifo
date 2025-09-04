@@ -11,6 +11,7 @@ authors = [
 license = { text = "MIT" }
 readme = "README.md"
 
+
 requires-python = ">=3.11,<3.14"
 
 dependencies = [
@@ -21,6 +22,11 @@ dependencies = [
     "icecream (>=2.1.7,<3.0.0)",
     "pyinstrument (>=5.1.1,<6.0.0)",
 ]
+
+
+[tool.poetry]
+
+requires-poetry = ">=2.1"
 
 
 [build-system]
