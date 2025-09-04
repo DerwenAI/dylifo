@@ -1,0 +1,31 @@
+[project]
+
+name = "dylifo"
+version = "0.1.0"
+description = "prototype DSPy summary of Senzing ER export"
+
+authors = [
+    { name = "Paco Nathan", email = "paco@senzing.com" }
+]
+
+license = { text = "MIT" }
+readme = "README.md"
+
+requires-python = ">=3.11,<3.14"
+
+dependencies = [
+    "dspy (>=3.0.3,<4.0.0)",
+    "pydantic (>=2.11.7,<3.0.0)",
+
+    "icecream (>=2.1.7,<3.0.0)",
+    "pyinstrument (>=5.1.1,<6.0.0)"
+]
+
+
+[build-system]
+
+requires = [
+    "poetry-core>=2.0.0,<3.0.0"
+]
+
+build-backend = "poetry.core.masonry.api"
