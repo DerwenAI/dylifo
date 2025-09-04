@@ -11,10 +11,13 @@ import sys
 import tomllib
 import tracemalloc
 import typing
+import unicodedata
 
 from icecream import ic
 from pyinstrument import Profiler
 import dspy
+import w3lib.html
+
 
 KILO_B: float = 1024.0
 
@@ -82,6 +85,19 @@ Control flow to invoke the `dspy.Predict` module.
         return reply
 
 
+    def scrub_text (
+        self,
+        reply: str,
+        ) -> str:
+        """
+Normalize the unicode in the given response text.
+        """
+        limpio = w3lib.html.replace_escape_chars(reply)
+        limpio = str(unicodedata.normalize("NFKD", limpio).encode("ascii", "ignore").decode("utf-8"))  # pylint: disable=C0301
+
+        return reply
+
+
 ######################################################################
 ## main entry point
 
@@ -94,7 +110,7 @@ if __name__ == "__main__":
     with open(config_path, mode = "rb") as fp:
         config = tomllib.load(fp)
 
-    rag: SenzingSummary = SenzingSummary(
+    sz_sum: SenzingSummary = SenzingSummary(
         config,
         run_local = True, # False
     )
@@ -109,7 +125,7 @@ if __name__ == "__main__":
     get_json_file: pathlib.Path = pathlib.Path(sys.argv[1])
 
     with open(get_json_file, "r", encoding = "utf-8") as fp:
-        rag.context = fp.read()
+        sz_sum.context = fp.read()
 
     # start profiling
     if profile:
@@ -117,11 +133,11 @@ if __name__ == "__main__":
         profiler.start()
         tracemalloc.start()
 
-    reply: dspy.primitives.prediction.Prediction = rag(
+    reply: dspy.primitives.prediction.Prediction = sz_sum(
         question = shaping_doc,
     )
 
-    ic(reply)
+    ic(sz_sum.scrub_text(reply.summary))
 
     # uncomment to analyze the generated prompt
     #dspy.inspect_history()
