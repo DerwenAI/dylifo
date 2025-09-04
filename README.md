@@ -16,7 +16,7 @@ Also download/install `Ollama` <https://ollama.com/> and pull the
 models you wish to use, for example:
 
 ```bash
-ollama pull gemma3:12b
+ollama pull gpt-oss:20b
 ```
 
 Modify the `config.toml` configuration file to change models, adjust
