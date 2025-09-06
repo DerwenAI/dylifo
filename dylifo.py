@@ -5,6 +5,7 @@
 Example using DSPy to summarize Senzing JSON.
 """
 
+import asyncio
 import os
 import pathlib
 import sys
@@ -63,7 +64,7 @@ Constructor.
         )
 
         # define the signature
-        self.respond: dspy.Predict = dspy.Predict(
+        self.predict: dspy.Predict = dspy.Predict(
             "context, question -> summary"
         )
 
@@ -78,7 +79,7 @@ Constructor.
         """
 Control flow to invoke the `dspy.Predict` module.
         """
-        reply: dspy.primitives.prediction.Prediction = self.respond(
+        reply: dspy.primitives.prediction.Prediction = self.predict(
             context = self.context,
             question = question,
         )
@@ -99,31 +100,33 @@ Normalize the unicode in the given response text.
         return reply
 
 
-######################################################################
-## main entry point
-
-if __name__ == "__main__":
-    profile: bool = True # False
-
+async def main (
+    data_path: str,
+    *,
+    config_path: pathlib.Path = pathlib.Path("config.toml"),
+    shaping_path: pathlib.Path = pathlib.Path("shaping.md"),
+    profile: bool = True,
+    run_local: bool = True,
+    show_prompt: bool = False,
+    ) -> None:
+    """
+Main entry point
+    """
     # configure
-    config_path: pathlib.Path = pathlib.Path("config.toml")
-
     with open(config_path, mode = "rb") as fp:
         config = tomllib.load(fp)
 
     sz_sum: SenzingSummary = SenzingSummary(
         config,
-        run_local = True, # False
+        run_local = run_local,
     )
 
     # load the shaping document for the user role
-    shaping_path: pathlib.Path = pathlib.Path("shaping.md")
-
     with open(shaping_path, "r", encoding = "utf-8") as fp:
         shaping_doc: str = fp.read()
 
     # load the JSON content from Senzing
-    get_json_file: pathlib.Path = pathlib.Path(sys.argv[1])
+    get_json_file: pathlib.Path = pathlib.Path(data_path)
 
     with open(get_json_file, "r", encoding = "utf-8") as fp:
         sz_sum.context = fp.read()
@@ -134,8 +137,10 @@ if __name__ == "__main__":
 
         profiler: Profiler = Profiler()
         profiler.start()
+
         tracemalloc.start()
 
+    ## call the LLM-based parts
     reply: dspy.primitives.prediction.Prediction = sz_sum(
         question = shaping_doc,
     )
@@ -149,10 +154,11 @@ if __name__ == "__main__":
     else:
         print(sz_sum.scrub_text(summary))
 
-    # uncomment to analyze the generated prompt
-    #dspy.inspect_history()
 
-    # report profiling analysis
+    # report the profiling summary analysis
+    if show_prompt:
+        dspy.inspect_history()
+
     if profile:
         amount: tuple = tracemalloc.get_traced_memory()
         peak: float = round(amount[1] / KILO_B / KILO_B, 2)
@@ -162,3 +168,8 @@ if __name__ == "__main__":
         profiler.stop()
         profiler.print()
 
+
+if __name__ == "__main__":
+    data_path: str = sys.argv[1]
+
+    asyncio.run(main(data_path))
