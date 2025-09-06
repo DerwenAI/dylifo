@@ -16,6 +16,7 @@ import unicodedata
 from icecream import ic
 from pyinstrument import Profiler
 import dspy
+import mlflow
 import w3lib.html
 
 
@@ -129,6 +130,8 @@ if __name__ == "__main__":
 
     # start profiling
     if profile:
+        mlflow.dspy.autolog()
+
         profiler: Profiler = Profiler()
         profiler.start()
         tracemalloc.start()
@@ -137,7 +140,14 @@ if __name__ == "__main__":
         question = shaping_doc,
     )
 
-    ic(sz_sum.scrub_text(reply.summary))
+    summary: typing.Optional[ str ] = reply.summary
+
+    if summary is None:
+        print("Null response")
+        dspy.inspect_history()
+
+    else:
+        print(sz_sum.scrub_text(summary))
 
     # uncomment to analyze the generated prompt
     #dspy.inspect_history()
