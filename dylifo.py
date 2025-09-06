@@ -24,7 +24,7 @@ import w3lib.html
 KILO_B: float = 1024.0
 
 
-class SenzingSummary (dspy.Module):
+class SenzingSummaryModule (dspy.Module):
     def __init__(
         self,
         config: dict,
@@ -64,27 +64,12 @@ Constructor.
         )
 
         # define the signature
-        self.predict: dspy.Predict = dspy.Predict(
+        self.summarize: dspy.Predict = dspy.Predict(
             "context, question -> summary"
         )
 
         # placeholder for the "input data" as context
         self.context: str = ""
-
-
-    def forward (
-        self,
-        question: str,
-        ) -> dspy.primitives.prediction.Prediction:
-        """
-Control flow to invoke the `dspy.Predict` module.
-        """
-        reply: dspy.primitives.prediction.Prediction = self.predict(
-            context = self.context,
-            question = question,
-        )
-
-        return reply
 
 
     def scrub_text (
@@ -96,6 +81,37 @@ Normalize the unicode in the given response text.
         """
         limpio = w3lib.html.replace_escape_chars(reply)
         limpio = str(unicodedata.normalize("NFKD", limpio).encode("ascii", "ignore").decode("utf-8"))  # pylint: disable=C0301
+
+        return reply
+
+
+    def forward (
+        self,
+        question: str,
+        ) -> dspy.primitives.prediction.Prediction:
+        """
+Mirrors the `aforward` so that this can be a target for optimization
+later.
+        """
+        reply: dspy.primitives.prediction.Prediction = self.summarize(
+            context = self.context,
+            question = question,
+        )
+
+        return reply
+
+
+    async def aforward (
+        self,
+        question: str,
+        ) -> dspy.primitives.prediction.Prediction:
+        """
+Control flow to invoke the `dspy.Predict` module.
+        """
+        reply: dspy.primitives.prediction.Prediction = await self.summarize.acall(
+            context = self.context,
+            question = question,
+        )
 
         return reply
 
@@ -116,7 +132,7 @@ Main entry point
     with open(config_path, mode = "rb") as fp:
         config = tomllib.load(fp)
 
-    sz_sum: SenzingSummary = SenzingSummary(
+    sz_sum: SenzingSummaryModule = SenzingSummaryModule(
         config,
         run_local = run_local,
     )
@@ -141,7 +157,7 @@ Main entry point
         tracemalloc.start()
 
     ## call the LLM-based parts
-    reply: dspy.primitives.prediction.Prediction = sz_sum(
+    reply: dspy.primitives.prediction.Prediction = await sz_sum.acall(
         question = shaping_doc,
     )
 
