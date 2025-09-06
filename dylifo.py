@@ -6,6 +6,7 @@ Example using DSPy to summarize Senzing JSON.
 """
 
 import asyncio
+import json
 import os
 import pathlib
 import sys
@@ -15,28 +16,67 @@ import typing
 import unicodedata
 
 from icecream import ic
-from pyinstrument import Profiler
+from pydantic import BaseModel
 import dspy
 import mlflow
+import pyinstrument
 import w3lib.html
 
 
-KILO_B: float = 1024.0
+class Profile:
+    """
+Use statistical call stack sampling and memory allocation analysis
+to augment the MLflow observability.
+    """
+    KILO_B: float = 1024.0
+
+
+    def __init__(
+        self,
+        ) -> None:
+        """
+Constructor.
+        """
+        self.profiler: pyinstrument.Profiler = pyinstrument.Profiler()
+        self.profiler.start()
+        tracemalloc.start()
+
+
+    def analyze (
+        self,
+        ) -> None:
+        """
+Analyze and report about performance measures.
+        """
+        amount: tuple = tracemalloc.get_traced_memory()
+        peak: float = round(amount[1] / self.KILO_B / self.KILO_B, 2)
+
+        tracemalloc.stop()
+        self.profiler.stop()
+
+        print(f"\npeak memory usage: {peak} MB")
+        self.profiler.print()
 
 
 class SenzingSummaryModule (dspy.Module):
+    """
+A custom `Module` in DSPy to summarize Senzing JSON about a set of
+related entities.
+    """
+
     def __init__(
         self,
         config: dict,
         *,
         run_local: bool = True,
+        shaping_path: pathlib.Path = pathlib.Path("shaping.json"),
         ) -> None:
         """
 Constructor.
         """
         self.config: dict = config
 
-        # load an LLM
+        # load LLM
         if run_local:
             self.lm: dspy.LM = dspy.LM(
                 self.config["dspy"]["lm_name"],
@@ -51,25 +91,26 @@ Constructor.
             OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY")
 
             if OPENAI_API_KEY is None:
-                raise ValueError("Environment variable 'OPENAI_API_KEY' is not set. Please set it to proceed.")
+                raise ValueError(
+                    "Environment variable 'OPENAI_API_KEY' is not set. Please set it to proceed."
+                )
 
             self.lm = dspy.LM(
                 "openai/gpt-4o-mini",
                 temperature = 0.0,
             )
 
-        # configure DSPy
         dspy.configure(
-            lm = self.lm
+            lm = self.lm,
         )
 
-        # define the signature
-        self.summarize: dspy.Predict = dspy.Predict(
+        # define the signatures
+        with open(shaping_path, "r", encoding = "utf-8") as fp:
+            self.shaping_doc: str = json.load(fp)
+
+        self.summary: dspy.Predict = dspy.Predict(
             "context, question -> summary"
         )
-
-        # placeholder for the "input data" as context
-        self.context: str = ""
 
 
     def scrub_text (
@@ -79,7 +120,7 @@ Constructor.
         """
 Normalize the unicode in the given response text.
         """
-        limpio = w3lib.html.replace_escape_chars(reply)
+        limpio: str = w3lib.html.replace_escape_chars(reply)
         limpio = str(unicodedata.normalize("NFKD", limpio).encode("ascii", "ignore").decode("utf-8"))  # pylint: disable=C0301
 
         return reply
@@ -87,42 +128,43 @@ Normalize the unicode in the given response text.
 
     def forward (
         self,
-        question: str,
+        context: str,
         ) -> dspy.primitives.prediction.Prediction:
         """
-Mirrors the `aforward` so that this can be a target for optimization
-later.
+Mirrors the `aforward()` method so that this can be a target for
+subsequent optimization.
         """
-        reply: dspy.primitives.prediction.Prediction = self.summarize(
-            context = self.context,
-            question = question,
+        sum_reply: dspy.primitives.prediction.Prediction = self.summary(
+            context = context,
+            question = "\n".join(self.shaping_doc["summary"]),
         )
 
-        return reply
+        return sum_reply
 
 
     async def aforward (
         self,
-        question: str,
+        context: str,
         ) -> dspy.primitives.prediction.Prediction:
         """
 Control flow to invoke the `dspy.Predict` module.
         """
-        reply: dspy.primitives.prediction.Prediction = await self.summarize.acall(
-            context = self.context,
-            question = question,
+        sum_reply: dspy.primitives.prediction.Prediction = await self.summary.acall(
+            context = context,
+            question = "\n".join(self.shaping_doc["summary"]),
         )
 
-        return reply
+        if sum_reply.summary is not None:
+            sum_reply.summary = self.scrub_text(sum_reply.summary)
+
+        return sum_reply
 
 
 async def main (
-    data_path: str,
+    data_paths: typing.List[ str ],
     *,
     config_path: pathlib.Path = pathlib.Path("config.toml"),
-    shaping_path: pathlib.Path = pathlib.Path("shaping.md"),
-    profile: bool = True,
-    run_local: bool = True,
+    profiling: bool = True,
     show_prompt: bool = False,
     ) -> None:
     """
@@ -130,62 +172,38 @@ Main entry point
     """
     # configure
     with open(config_path, mode = "rb") as fp:
-        config = tomllib.load(fp)
+        config: dict = tomllib.load(fp)
 
     sz_sum: SenzingSummaryModule = SenzingSummaryModule(
         config,
-        run_local = run_local,
     )
-
-    # load the shaping document for the user role
-    with open(shaping_path, "r", encoding = "utf-8") as fp:
-        shaping_doc: str = fp.read()
-
-    # load the JSON content from Senzing
-    get_json_file: pathlib.Path = pathlib.Path(data_path)
-
-    with open(get_json_file, "r", encoding = "utf-8") as fp:
-        sz_sum.context = fp.read()
 
     # start profiling
-    if profile:
-        mlflow.dspy.autolog()
-
-        profiler: Profiler = Profiler()
-        profiler.start()
-
-        tracemalloc.start()
+    if profiling:
+        prof: Profile = Profile()
 
     ## call the LLM-based parts
-    reply: dspy.primitives.prediction.Prediction = await sz_sum.acall(
-        question = shaping_doc,
-    )
+    mlflow.dspy.autolog()
 
-    summary: typing.Optional[ str ] = reply.summary
+    for data_path in data_paths:
+        reply: dspy.primitives.prediction.Prediction = await sz_sum.acall(
+            open(pathlib.Path(data_path), "r", encoding = "utf-8").read()
+        )
 
-    if summary is None:
-        print("Null response")
-        dspy.inspect_history()
+        print(reply.summary)
 
-    else:
-        print(sz_sum.scrub_text(summary))
-
+        if show_prompt or reply.summary is None:
+            print("Null response, here is the prompt used:")
+            dspy.inspect_history()
 
     # report the profiling summary analysis
-    if show_prompt:
-        dspy.inspect_history()
-
-    if profile:
-        amount: tuple = tracemalloc.get_traced_memory()
-        peak: float = round(amount[1] / KILO_B / KILO_B, 2)
-        print(f"peak memory usage: {peak} MB")
-        tracemalloc.stop()
-
-        profiler.stop()
-        profiler.print()
+    if profiling:
+        prof.analyze()
 
 
 if __name__ == "__main__":
-    data_path: str = sys.argv[1]
+    data_paths: typing.List[ str ]  = [
+        sys.argv[1],
+    ]
 
-    asyncio.run(main(data_path))
+    asyncio.run(main(data_paths))
