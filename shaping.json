@@ -1,8 +1,5 @@
 {
-    "extract": [
-        "For each person, which data sources do they appear in, prioritize `match_key` instead of `match_level`, and output as a table."
-    ],
     "summary": [
-        "In one text paragraph summarize the relationships among individuals."
+        "In one text paragraph summarize the relationships among individuals, ignoring the `match_level` values."
     ]
 }

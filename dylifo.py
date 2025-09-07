@@ -58,6 +58,25 @@ Analyze and report about performance measures.
         self.profiler.print()
 
 
+class EntitySourceRow (BaseModel):
+    entity_id: int
+    person: str
+    data_source: str
+    match_key: str
+
+
+class ExtractSources (dspy.Signature):
+    """
+    context -> extract_rows: list[EntitySourceRow]
+
+    - Use the provided `context` to extract `entity_rows`.
+    - For each person, list which data sources they appear in.
+    - Prioritizing `match_key` instead of `match_level`.
+    """
+    context: str = dspy.InputField(desc="facts here are assumed to be true")
+    entity_rows: list[EntitySourceRow] = dspy.OutputField()
+
+
 class SenzingSummaryModule (dspy.Module):
     """
 A custom `Module` in DSPy to summarize Senzing JSON about a set of
@@ -102,70 +121,96 @@ Constructor.
 
         dspy.configure(
             lm = self.lm,
+            track_usage = True,
         )
 
         # define the signatures
         with open(shaping_path, "r", encoding = "utf-8") as fp:
             self.shaping_doc: str = json.load(fp)
 
+        self.extract: dspy.Predict = dspy.Predict(ExtractSources)
+
         self.summary: dspy.Predict = dspy.Predict(
-            "context, question -> summary"
+            "context, question -> summary",
         )
 
 
     def scrub_text (
         self,
-        reply: str,
+        text: str,
         ) -> str:
         """
 Normalize the unicode in the given response text.
         """
-        limpio: str = w3lib.html.replace_escape_chars(reply)
-        limpio = str(unicodedata.normalize("NFKD", limpio).encode("ascii", "ignore").decode("utf-8"))  # pylint: disable=C0301
+        if text is None:
+            text = ""
 
-        return reply
+        return str(unicodedata.normalize(
+            "NFKD",
+            w3lib.html.replace_escape_chars(text),
+        ).encode("ascii", "ignore").decode("utf-8"))
 
 
     def forward (
         self,
         context: str,
-        ) -> dspy.primitives.prediction.Prediction:
+        ) -> dspy.Prediction:
         """
 Mirrors the `aforward()` method so that this can be a target for
 subsequent optimization.
         """
-        sum_reply: dspy.primitives.prediction.Prediction = self.summary(
+        ext_reply: dspy.Prediction = self.extract(
+            context = context,
+        )
+
+        sum_reply: dspy.Prediction = self.summary(
             context = context,
             question = "\n".join(self.shaping_doc["summary"]),
         )
 
-        return sum_reply
+        return dspy.Prediction(
+            entity_rows = ext_reply.entity_rows,
+            summary = self.scrub_text(sum_reply.summary),
+        )
 
 
     async def aforward (
         self,
         context: str,
-        ) -> dspy.primitives.prediction.Prediction:
+        ) -> dspy.Prediction:
         """
 Control flow to invoke the `dspy.Predict` module.
         """
-        sum_reply: dspy.primitives.prediction.Prediction = await self.summary.acall(
-            context = context,
-            question = "\n".join(self.shaping_doc["summary"]),
+        async with asyncio.TaskGroup() as tg:
+            tasks: list = [
+                tg.create_task(
+                    self.extract.acall(
+                        context = context,
+                    )
+                ),
+                tg.create_task(
+                    self.summary.acall(
+                        context = context,
+                        question = "\n".join(self.shaping_doc["summary"]),
+                    )
+                ),
+            ]
+
+        ext_result, sum_result = [ task.result() for task in tasks ]
+
+        return dspy.Prediction(
+            entity_rows = ext_result.entity_rows,
+            summary = self.scrub_text(sum_result.summary),
         )
 
-        if sum_reply.summary is not None:
-            sum_reply.summary = self.scrub_text(sum_reply.summary)
 
-        return sum_reply
-
-
-async def main (
+#async def main (
+def main (
     data_paths: typing.List[ str ],
     *,
     config_path: pathlib.Path = pathlib.Path("config.toml"),
-    profiling: bool = True,
-    show_prompt: bool = False,
+    profiling: bool = True, # False
+    show_prompt: bool = False, # True
     ) -> None:
     """
 Main entry point
@@ -182,28 +227,37 @@ Main entry point
     if profiling:
         prof: Profile = Profile()
 
+    ######################################################################
     ## call the LLM-based parts
-    mlflow.dspy.autolog()
-
     for data_path in data_paths:
-        reply: dspy.primitives.prediction.Prediction = await sz_sum.acall(
+        #predict: dspy.Prediction = await sz_sum.acall(
+        predict: dspy.Prediction = sz_sum(
             open(pathlib.Path(data_path), "r", encoding = "utf-8").read()
         )
 
-        print(reply.summary)
+        print(predict.summary)
 
-        if show_prompt or reply.summary is None:
+        for row in predict.entity_rows:
+            ic(row)
+
+        print("\ntoken usage:", predict.get_lm_usage())
+
+        if show_prompt or predict.summary is None:
             print("Null response, here is the prompt used:")
             dspy.inspect_history()
 
+    ######################################################################
     # report the profiling summary analysis
     if profiling:
         prof.analyze()
 
 
 if __name__ == "__main__":
+    mlflow.dspy.autolog()
+
     data_paths: typing.List[ str ]  = [
         sys.argv[1],
     ]
 
-    asyncio.run(main(data_paths))
+    #asyncio.run(main(data_paths))
+    main(data_paths)
