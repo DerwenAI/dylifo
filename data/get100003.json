@@ -1,110 +1,50 @@
-- do_get - 
-getEntityByEntityID
-	G2_ENTITY_INCLUDE_ENTITY_NAME
-	G2_ENTITY_INCLUDE_RECORD_DATA
-	G2_ENTITY_INCLUDE_RECORD_MATCHING_INFO
-	G2_ENTITY_INCLUDE_RECORD_FORMATTED_DATA
-	G2_ENTITY_INCLUDE_ALL_RELATIONS
-	G2_ENTITY_INCLUDE_RELATED_ENTITY_NAME
-	G2_ENTITY_INCLUDE_RELATED_MATCHING_INFO
-	G2_ENTITY_INCLUDE_RELATED_RECORD_SUMMARY
-{
-    "RESOLVED_ENTITY": {
-        "ENTITY_ID": 100003,
-        "ENTITY_NAME": "Robert Smith",
-        "RECORDS": [
-            {
-                "DATA_SOURCE": "ECOMMERCE",
-                "RECORD_ID": "1008",
-                "ENTITY_TYPE": "GENERIC",
-                "INTERNAL_ID": 100003,
-                "ENTITY_KEY": "5C22567D0EF3D254B37582625034F111B2C38B05",
-                "ENTITY_DESC": "Robert Smith",
-                "MATCH_KEY": "",
-                "MATCH_LEVEL": 0,
-                "MATCH_LEVEL_CODE": "",
-                "ERRULE_CODE": "",
-                "LAST_SEEN_DT": "2025-09-03 17:54:43.463",
-                "NAME_DATA": [
-                    "PRIMARY: Smith Robert"
-                ],
-                "ATTRIBUTE_DATA": [
-                    "RECORD_TYPE: PERSON"
-                ],
-                "IDENTIFIER_DATA": [
-                    "EMAIL: robert.smith@email.com"
-                ],
-                "ADDRESS_DATA": [],
-                "PHONE_DATA": [],
-                "RELATIONSHIP_DATA": [],
-                "ENTITY_DATA": [],
-                "OTHER_DATA": [
-                    "STATUS: Active",
-                    "DATE: 3/5/19"
-                ]
-            }
-        ]
-    },
-    "RELATED_ENTITIES": [
-        {
-            "ENTITY_ID": 1,
-            "MATCH_LEVEL": 2,
-            "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
-            "MATCH_KEY": "+NAME",
-            "ERRULE_CODE": "CNAME",
-            "IS_DISCLOSED": 0,
-            "IS_AMBIGUOUS": 0,
+[
+    {
+        "RESOLVED_ENTITY": {
+            "ENTITY_ID": 100003,
             "ENTITY_NAME": "Robert Smith",
-            "RECORD_SUMMARY": [
-                {
-                    "DATA_SOURCE": "BANK-ONBOARDING",
-                    "RECORD_COUNT": 4,
-                    "FIRST_SEEN_DT": "2025-09-03 17:54:00.866",
-                    "LAST_SEEN_DT": "2025-09-03 17:54:00.882"
-                }
-            ],
-            "LAST_SEEN_DT": "2025-09-03 17:54:00.882"
-        },
-        {
-            "ENTITY_ID": 5,
-            "MATCH_LEVEL": 2,
-            "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
-            "MATCH_KEY": "+NAME",
-            "ERRULE_CODE": "CNAME",
-            "IS_DISCLOSED": 0,
-            "IS_AMBIGUOUS": 0,
-            "ENTITY_NAME": "Robert E Smith Sr",
-            "RECORD_SUMMARY": [
-                {
-                    "DATA_SOURCE": "BANK-ONBOARDING",
-                    "RECORD_COUNT": 1,
-                    "FIRST_SEEN_DT": "2025-09-03 17:54:00.886",
-                    "LAST_SEEN_DT": "2025-09-03 17:54:00.886"
-                },
+            "RECORDS": [
                 {
                     "DATA_SOURCE": "ECOMMERCE",
-                    "RECORD_COUNT": 1,
-                    "FIRST_SEEN_DT": "2025-09-03 17:54:43.446",
-                    "LAST_SEEN_DT": "2025-09-03 17:54:43.446"
+                    "RECORD_ID": "1008",
+                    "ENTITY_TYPE": "GENERIC",
+                    "INTERNAL_ID": 100003,
+                    "ENTITY_KEY": "5C22567D0EF3D254B37582625034F111B2C38B05",
+                    "ENTITY_DESC": "Robert Smith",
+                    "MATCH_KEY": "",
+                    "MATCH_LEVEL": 0,
+                    "MATCH_LEVEL_CODE": "",
+                    "ERRULE_CODE": "",
+                    "LAST_SEEN_DT": "2025-09-03 17:54:43.463",
+                    "NAME_DATA": [
+                        "PRIMARY: Smith Robert"
+                    ],
+                    "ATTRIBUTE_DATA": [
+                        "RECORD_TYPE: PERSON"
+                    ],
+                    "IDENTIFIER_DATA": [
+                        "EMAIL: robert.smith@email.com"
+                    ],
+                    "ADDRESS_DATA": [],
+                    "PHONE_DATA": [],
+                    "RELATIONSHIP_DATA": [],
+                    "ENTITY_DATA": [],
+                    "OTHER_DATA": [
+                        "STATUS: Active",
+                        "DATE: 3/5/19"
+                    ]
                 }
-            ],
-            "LAST_SEEN_DT": "2025-09-03 17:54:43.446"
-        }
-    ]
-}
-
-- do_tree - 
-findNetworkByEntityID
-	G2_ENTITY_INCLUDE_ENTITY_NAME
-	G2_ENTITY_INCLUDE_RECORD_SUMMARY
-	G2_ENTITY_INCLUDE_ALL_RELATIONS
-	G2_ENTITY_INCLUDE_RELATED_MATCHING_INFO
-{
-    "ENTITY_PATHS": [],
-    "ENTITIES": [
-        {
-            "RESOLVED_ENTITY": {
+            ]
+        },
+        "RELATED_ENTITIES": [
+            {
                 "ENTITY_ID": 1,
+                "MATCH_LEVEL": 2,
+                "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                "MATCH_KEY": "+NAME",
+                "ERRULE_CODE": "CNAME",
+                "IS_DISCLOSED": 0,
+                "IS_AMBIGUOUS": 0,
                 "ENTITY_NAME": "Robert Smith",
                 "RECORD_SUMMARY": [
                     {
@@ -116,39 +56,14 @@ findNetworkByEntityID
                 ],
                 "LAST_SEEN_DT": "2025-09-03 17:54:00.882"
             },
-            "RELATED_ENTITIES": [
-                {
-                    "ENTITY_ID": 5,
-                    "MATCH_LEVEL": 2,
-                    "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
-                    "MATCH_KEY": "+NAME+ADDRESS-DOB",
-                    "ERRULE_CODE": "CNAME_CFF_DEXCL",
-                    "IS_DISCLOSED": 0,
-                    "IS_AMBIGUOUS": 0
-                },
-                {
-                    "ENTITY_ID": 100003,
-                    "MATCH_LEVEL": 2,
-                    "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
-                    "MATCH_KEY": "+NAME",
-                    "ERRULE_CODE": "CNAME",
-                    "IS_DISCLOSED": 0,
-                    "IS_AMBIGUOUS": 0
-                },
-                {
-                    "ENTITY_ID": 100002,
-                    "MATCH_LEVEL": 3,
-                    "MATCH_LEVEL_CODE": "POSSIBLY_RELATED",
-                    "MATCH_KEY": "+ADDRESS+SURNAME",
-                    "ERRULE_CODE": "CFF_SURNAME",
-                    "IS_DISCLOSED": 0,
-                    "IS_AMBIGUOUS": 0
-                }
-            ]
-        },
-        {
-            "RESOLVED_ENTITY": {
+            {
                 "ENTITY_ID": 5,
+                "MATCH_LEVEL": 2,
+                "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                "MATCH_KEY": "+NAME",
+                "ERRULE_CODE": "CNAME",
+                "IS_DISCLOSED": 0,
+                "IS_AMBIGUOUS": 0,
                 "ENTITY_NAME": "Robert E Smith Sr",
                 "RECORD_SUMMARY": [
                     {
@@ -165,63 +80,132 @@ findNetworkByEntityID
                     }
                 ],
                 "LAST_SEEN_DT": "2025-09-03 17:54:43.446"
-            },
-            "RELATED_ENTITIES": [
-                {
+            }
+        ]
+    },
+    {
+        "ENTITY_PATHS": [],
+        "ENTITIES": [
+            {
+                "RESOLVED_ENTITY": {
                     "ENTITY_ID": 1,
-                    "MATCH_LEVEL": 2,
-                    "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
-                    "MATCH_KEY": "+NAME+ADDRESS-DOB",
-                    "ERRULE_CODE": "CNAME_CFF_DEXCL",
-                    "IS_DISCLOSED": 0,
-                    "IS_AMBIGUOUS": 0
+                    "ENTITY_NAME": "Robert Smith",
+                    "RECORD_SUMMARY": [
+                        {
+                            "DATA_SOURCE": "BANK-ONBOARDING",
+                            "RECORD_COUNT": 4,
+                            "FIRST_SEEN_DT": "2025-09-03 17:54:00.866",
+                            "LAST_SEEN_DT": "2025-09-03 17:54:00.882"
+                        }
+                    ],
+                    "LAST_SEEN_DT": "2025-09-03 17:54:00.882"
                 },
-                {
-                    "ENTITY_ID": 100003,
-                    "MATCH_LEVEL": 2,
-                    "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
-                    "MATCH_KEY": "+NAME",
-                    "ERRULE_CODE": "CNAME",
-                    "IS_DISCLOSED": 0,
-                    "IS_AMBIGUOUS": 0
-                }
-            ]
-        },
-        {
-            "RESOLVED_ENTITY": {
-                "ENTITY_ID": 100003,
-                "ENTITY_NAME": "Robert Smith",
-                "RECORD_SUMMARY": [
+                "RELATED_ENTITIES": [
                     {
-                        "DATA_SOURCE": "ECOMMERCE",
-                        "RECORD_COUNT": 1,
-                        "FIRST_SEEN_DT": "2025-09-03 17:54:43.463",
-                        "LAST_SEEN_DT": "2025-09-03 17:54:43.463"
+                        "ENTITY_ID": 5,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME+ADDRESS-DOB",
+                        "ERRULE_CODE": "CNAME_CFF_DEXCL",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 100003,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 100002,
+                        "MATCH_LEVEL": 3,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_RELATED",
+                        "MATCH_KEY": "+ADDRESS+SURNAME",
+                        "ERRULE_CODE": "CFF_SURNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
                     }
-                ],
-                "LAST_SEEN_DT": "2025-09-03 17:54:43.463"
+                ]
             },
-            "RELATED_ENTITIES": [
-                {
-                    "ENTITY_ID": 1,
-                    "MATCH_LEVEL": 2,
-                    "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
-                    "MATCH_KEY": "+NAME",
-                    "ERRULE_CODE": "CNAME",
-                    "IS_DISCLOSED": 0,
-                    "IS_AMBIGUOUS": 0
-                },
-                {
+            {
+                "RESOLVED_ENTITY": {
                     "ENTITY_ID": 5,
-                    "MATCH_LEVEL": 2,
-                    "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
-                    "MATCH_KEY": "+NAME",
-                    "ERRULE_CODE": "CNAME",
-                    "IS_DISCLOSED": 0,
-                    "IS_AMBIGUOUS": 0
-                }
-            ]
-        }
-    ]
-}
-
+                    "ENTITY_NAME": "Robert E Smith Sr",
+                    "RECORD_SUMMARY": [
+                        {
+                            "DATA_SOURCE": "BANK-ONBOARDING",
+                            "RECORD_COUNT": 1,
+                            "FIRST_SEEN_DT": "2025-09-03 17:54:00.886",
+                            "LAST_SEEN_DT": "2025-09-03 17:54:00.886"
+                        },
+                        {
+                            "DATA_SOURCE": "ECOMMERCE",
+                            "RECORD_COUNT": 1,
+                            "FIRST_SEEN_DT": "2025-09-03 17:54:43.446",
+                            "LAST_SEEN_DT": "2025-09-03 17:54:43.446"
+                        }
+                    ],
+                    "LAST_SEEN_DT": "2025-09-03 17:54:43.446"
+                },
+                "RELATED_ENTITIES": [
+                    {
+                        "ENTITY_ID": 1,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME+ADDRESS-DOB",
+                        "ERRULE_CODE": "CNAME_CFF_DEXCL",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 100003,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    }
+                ]
+            },
+            {
+                "RESOLVED_ENTITY": {
+                    "ENTITY_ID": 100003,
+                    "ENTITY_NAME": "Robert Smith",
+                    "RECORD_SUMMARY": [
+                        {
+                            "DATA_SOURCE": "ECOMMERCE",
+                            "RECORD_COUNT": 1,
+                            "FIRST_SEEN_DT": "2025-09-03 17:54:43.463",
+                            "LAST_SEEN_DT": "2025-09-03 17:54:43.463"
+                        }
+                    ],
+                    "LAST_SEEN_DT": "2025-09-03 17:54:43.463"
+                },
+                "RELATED_ENTITIES": [
+                    {
+                        "ENTITY_ID": 1,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 5,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    }
+                ]
+            }
+        ]
+    }
+]

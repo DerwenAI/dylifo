@@ -1,6 +1,6 @@
 [dspy]
     
-lm_name = "ollama_chat/gpt-oss:20b"
+lm_name = "ollama/gpt-oss:20b"
 #lm_name = "ollama_chat/deepseek-r1:8b"
 #lm_name = "ollama_chat/phi3:14b"
 #lm_name = "ollama_chat/gemma3:12b"
