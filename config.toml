@@ -1,5 +1,7 @@
 [dspy]
     
+run_local = false
+
 lm_name = "ollama/gpt-oss:20b"
 #lm_name = "ollama_chat/deepseek-r1:8b"
 #lm_name = "ollama_chat/phi3:14b"
@@ -10,3 +12,4 @@ lm_name = "ollama/gpt-oss:20b"
 api_base = "http://localhost:11434"
 temperature = 0.0
 max_tokens = 50000
+
