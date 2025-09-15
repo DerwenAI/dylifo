@@ -25,12 +25,17 @@ Means of manipulating JSON output from ER results from the Senzing SDK.
 
     KNOWN_KEYS: typing.Set[ str ] = {
         "AMOUNT",
+        "CANDIDATE_CAP_REACHED",
+        "CANDIDATE_FEAT_USAGE_TYPE",
         "CATEGORY",
         "DATE",
         "ENTITY_ID",
         "ENTITY_TYPE",
         "ERRULE_CODE",
         "FIRST_SEEN_DT",
+        "FTYPE_CODE",
+        "INBOUND_FEAT_USAGE_TYPE",
+        "INBOUND_VIRTUAL_ENTITY_ID",
         "IS_AMBIGUOUS",
         "IS_DISCLOSED",
         "LAST_SEEN_DT",
@@ -38,10 +43,25 @@ Means of manipulating JSON output from ER results from the Senzing SDK.
         "MATCH_LEVEL",
         "MATCH_LEVEL_CODE",
         "RECORD_TYPE",
+        "RESULT_VIRTUAL_ENTITY_ID",
+        "SCORE_BEHAVIOR",
+        "SCORE_BUCKET",
+        "SCORING_CAP_REACHED",
+        "SOURCE",
         "STATUS",
+        "SUPPRESSED",
+        "TOKEN",
+        "USAGE_TYPE",
+        "USED_FOR_CAND",
+        "USED_FOR_SCORING",
+        "VIRTUAL_ENTITY_ID",
+        "WHY_ERRULE_CODE",
+        "WHY_KEY",
     }
 
     MASKED_KEYS: typing.Set[ str ] = {
+        "ACCT_NUM",
+        "CANDIDATE_FEAT_DESC",
         "DATA_SOURCE",
         "DOB",
         "DRLIC",
@@ -49,7 +69,10 @@ Means of manipulating JSON output from ER results from the Senzing SDK.
         "ENTITY_DESC",
         "ENTITY_KEY",
         "ENTITY_NAME",
+        "FEAT_DESC",
         "HOME",
+        "INBOUND_FEAT_DESC",
+        "ISSUING_BANK",
         "MAILING",
         "MOBILE",
         "PRIMARY",
@@ -94,7 +117,7 @@ Mask a PII value
             found_key: str = list(self.tokens.keys())[elem_index]
 
             if found_key.startswith(key):
-                return self.tokens.get(found_key)
+                return found_key
 
         # nope, this is a new value
         self.key_count[key] += 1
@@ -160,16 +183,27 @@ Handle a key pair for a literal value.
                 ic("MASKED:", key, elem)
 
             masked_elem: str = self.mask_value(key, elem)
+
+            if elem == masked_elem:
+                err_str: str = f"NOT MASKED: {elem} == {masked_elem}"
+                raise RuntimeError(err_str)
+
             return [ key, masked_elem ]
 
         elif isinstance(elem, int) or key in self.KNOWN_KEYS:
             return [ key, elem ]
 
         elif isinstance(elem, str):
-            err_str: str = f"UNKNOWN: {key} {elem}"
+            err_str = f"UNKNOWN: {key} {elem}"
             logging.warning(err_str)
 
-            return [ key, elem ]
+            masked_elem = self.mask_value(key, elem)
+
+            if elem == masked_elem:
+                err_str = f"NOT MASKED: {elem} == {masked_elem}"
+                raise RuntimeError(err_str)
+
+            return [ key, masked_elem ]
 
         else:
             if debug:

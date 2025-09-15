@@ -69,6 +69,12 @@ Main entry point
         print()
 
         for row in predict.entity_rows:
+            if row.person in er.tokens:
+                row.person = er.tokens[row.person]
+
+            if row.data_source in er.tokens:
+                row.data_source = er.tokens[row.data_source]
+
             ic(row)
 
         print("\ntoken usage:", predict.get_lm_usage())
