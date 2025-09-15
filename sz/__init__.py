@@ -4,7 +4,11 @@
 """
 Package definitions.
 
-see copyright/license https://github.com/DerwenAI/strwythura/README.md
+see copyright/license https://github.com/DerwenAI/dylifo/README.md
 """
 
 from .mask import EntityResolution
+
+from .prof import Profile
+
+from .summary import EntitySourceRow, ExtractSources, SummaryModule
