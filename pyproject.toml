@@ -1,8 +1,8 @@
 [project]
 
 name = "dylifo"
-version = "0.2.0"
-description = "prototype DSPy summary of Senzing ER export"
+version = "0.3.0"
+description = "DSPy summary of Senzing ER export"
 
 authors = [
     { name = "Paco Nathan", email = "paco@senzing.com" }
@@ -11,17 +11,17 @@ authors = [
 license = { text = "MIT" }
 readme = "README.md"
 
-
 requires-python = ">=3.11,<3.14"
 
 dependencies = [
     "dspy (>=3.0.3,<4.0.0)",
+    "mlflow (>=3.3.2,<4.0.0)",
+
     "pydantic (>=2.11.7,<3.0.0)",
     "w3lib (>=2.3.1,<3.0.0)",
 
     "icecream (>=2.1.7,<3.0.0)",
     "pyinstrument (>=5.1.1,<6.0.0)",
-    "mlflow (>=3.3.2,<4.0.0)",
 ]
 
 
