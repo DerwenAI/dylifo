@@ -17,7 +17,7 @@ from icecream import ic
 import dspy
 import mlflow
 
-from sz import EntityResolution, Profile, SummaryModule
+from dylifo import EntityResolution, Profile, SummaryModule
 
 
 #async def main (
