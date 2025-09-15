@@ -117,7 +117,7 @@ Mask a PII value
             found_key: str = list(self.tokens.keys())[elem_index]
 
             if found_key.startswith(key):
-                return self.tokens.get(found_key)
+                return found_key
 
         # nope, this is a new value
         self.key_count[key] += 1
@@ -183,16 +183,26 @@ Handle a key pair for a literal value.
                 ic("MASKED:", key, elem)
 
             masked_elem: str = self.mask_value(key, elem)
+
+            if elem == masked_elem:
+                err_str: str = f"NOT MASKED: {elem} == {masked_elem}"
+                raise RuntimeError(err_str)
+
             return [ key, masked_elem ]
 
         elif isinstance(elem, int) or key in self.KNOWN_KEYS:
             return [ key, elem ]
 
         elif isinstance(elem, str):
-            err_str: str = f"UNKNOWN: {key} {elem}"
+            err_str = f"UNKNOWN: {key} {elem}"
             logging.warning(err_str)
 
-            masked_elem: str = self.mask_value(key, elem)
+            masked_elem = self.mask_value(key, elem)
+
+            if elem == masked_elem:
+                err_str = f"NOT MASKED: {elem} == {masked_elem}"
+                raise RuntimeError(err_str)
+
             return [ key, masked_elem ]
 
         else:
