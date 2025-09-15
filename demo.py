@@ -39,7 +39,7 @@ Main entry point
 
     sz_sum: SummaryModule = SummaryModule(
         config,
-        run_local = False, # True
+        run_local = config["dspy"]["run_local"],
     )
 
     # start profiling
