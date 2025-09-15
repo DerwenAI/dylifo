@@ -2,60 +2,18 @@
 # -*- coding: utf-8 -*-
 
 """
-Example using DSPy to summarize Senzing JSON.
+DSPy module for summarizing Senzing ER JSON output.
 """
 
 import asyncio
 import json
 import os
 import pathlib
-import sys
-import tomllib
-import tracemalloc
-import typing
 import unicodedata
 
-from icecream import ic
 from pydantic import BaseModel
 import dspy
-import mlflow
-import pyinstrument
 import w3lib.html
-
-
-class Profile:
-    """
-Use statistical call stack sampling and memory allocation analysis
-to augment the MLflow observability.
-    """
-    KILO_B: float = 1024.0
-
-
-    def __init__(
-        self,
-        ) -> None:
-        """
-Constructor.
-        """
-        self.profiler: pyinstrument.Profiler = pyinstrument.Profiler()
-        self.profiler.start()
-        tracemalloc.start()
-
-
-    def analyze (
-        self,
-        ) -> None:
-        """
-Analyze and report about performance measures.
-        """
-        amount: tuple = tracemalloc.get_traced_memory()
-        peak: float = round(amount[1] / self.KILO_B / self.KILO_B, 2)
-
-        tracemalloc.stop()
-        self.profiler.stop()
-
-        print(f"\npeak memory usage: {peak} MB")
-        self.profiler.print()
 
 
 class EntitySourceRow (BaseModel):
@@ -77,7 +35,7 @@ class ExtractSources (dspy.Signature):
     entity_rows: list[EntitySourceRow] = dspy.OutputField()
 
 
-class SenzingSummaryModule (dspy.Module):
+class SummaryModule (dspy.Module):
     """
 A custom `Module` in DSPy to summarize Senzing JSON about a set of
 related entities.
@@ -202,62 +160,3 @@ Control flow to invoke the `dspy.Predict` module.
             entity_rows = ext_result.entity_rows,
             summary = self.scrub_text(sum_result.summary),
         )
-
-
-#async def main (
-def main (
-    data_paths: typing.List[ str ],
-    *,
-    config_path: pathlib.Path = pathlib.Path("config.toml"),
-    profiling: bool = True, # False
-    show_prompt: bool = False, # True
-    ) -> None:
-    """
-Main entry point
-    """
-    # configure
-    with open(config_path, mode = "rb") as fp:
-        config: dict = tomllib.load(fp)
-
-    sz_sum: SenzingSummaryModule = SenzingSummaryModule(
-        config,
-    )
-
-    # start profiling
-    if profiling:
-        prof: Profile = Profile()
-
-    ######################################################################
-    ## call the LLM-based parts
-    for data_path in data_paths:
-        #predict: dspy.Prediction = await sz_sum.acall(
-        predict: dspy.Prediction = sz_sum(
-            open(pathlib.Path(data_path), "r", encoding = "utf-8").read()
-        )
-
-        print(predict.summary)
-
-        for row in predict.entity_rows:
-            ic(row)
-
-        print("\ntoken usage:", predict.get_lm_usage())
-
-        if show_prompt or predict.summary is None:
-            print("Null response, here is the prompt used:")
-            dspy.inspect_history()
-
-    ######################################################################
-    # report the profiling summary analysis
-    if profiling:
-        prof.analyze()
-
-
-if __name__ == "__main__":
-    mlflow.dspy.autolog()
-
-    data_paths: typing.List[ str ]  = [
-        sys.argv[1],
-    ]
-
-    #asyncio.run(main(data_paths))
-    main(data_paths)
