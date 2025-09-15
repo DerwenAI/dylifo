@@ -22,6 +22,8 @@ import mlflow
 import pyinstrument
 import w3lib.html
 
+from sz import EntityResolution
+
 
 class Profile:
     """
@@ -221,7 +223,10 @@ Main entry point
 
     sz_sum: SenzingSummaryModule = SenzingSummaryModule(
         config,
+        run_local = False, # True
     )
+
+    er: EntityResolution = EntityResolution()
 
     # start profiling
     if profiling:
@@ -229,13 +234,24 @@ Main entry point
 
     ######################################################################
     ## call the LLM-based parts
+
     for data_path in data_paths:
-        #predict: dspy.Prediction = await sz_sum.acall(
-        predict: dspy.Prediction = sz_sum(
-            open(pathlib.Path(data_path), "r", encoding = "utf-8").read()
+        with open(pathlib.Path(data_path), "r", encoding = "utf-8") as fp:
+            dat: typing.Any = json.load(fp)
+
+        masked_dat: typing.Any = er.dive(
+            [],
+            dat,
+            debug = False, # True
         )
 
-        print(predict.summary)
+        #predict: dspy.Prediction = await sz_sum.acall(
+        predict: dspy.Prediction = sz_sum(
+            json.dumps(masked_dat),
+        )
+
+        print(er.unmask_text(predict.summary))
+        print()
 
         for row in predict.entity_rows:
             ic(row)
