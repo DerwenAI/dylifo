@@ -13,8 +13,6 @@ import re
 import sys
 import typing
 
-from icecream import ic
-
 
 class EntityResolution:
     """
@@ -180,7 +178,7 @@ Handle a key pair for a literal value.
 
         elif key in self.MASKED_KEYS:
             if debug:
-                ic("MASKED:", key, elem)
+                print("MASKED:", key, elem)
 
             masked_elem: str = self.mask_value(key, elem)
 
