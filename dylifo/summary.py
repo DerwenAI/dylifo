@@ -46,7 +46,7 @@ related entities.
         config: dict,
         *,
         run_local: bool = True,
-        shaping_path: pathlib.Path = pathlib.Path("shaping.json"),
+        shaping_path: pathlib.Path = pathlib.Path("shaping.md"),
         ) -> None:
         """
 Constructor.
@@ -84,7 +84,7 @@ Constructor.
 
         # define the signatures
         with open(shaping_path, "r", encoding = "utf-8") as fp:
-            self.shaping_doc: str = json.load(fp)
+            self.shaping_doc: str = fp.read()
 
         self.extract: dspy.Predict = dspy.Predict(ExtractSources)
 
@@ -123,7 +123,7 @@ subsequent optimization.
 
         sum_reply: dspy.Prediction = self.summary(
             context = context,
-            question = "\n".join(self.shaping_doc["summary"]),
+            question = self.shaping_doc,
         )
 
         return dspy.Prediction(
@@ -149,7 +149,7 @@ Control flow to invoke the `dspy.Predict` module.
                 tg.create_task(
                     self.summary.acall(
                         context = context,
-                        question = "\n".join(self.shaping_doc["summary"]),
+                        question = self.shaping_doc,
                     )
                 ),
             ]
