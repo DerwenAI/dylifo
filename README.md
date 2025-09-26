@@ -34,6 +34,13 @@ Run the `demo.py` script with one of the JSON data files, for example:
 poetry run python3 demo.py data/get.json
 ```
 
+For an interactive UI based on [`Streamlit`](https://streamlit.io/):
+
+```bash
+poetry run streamlit run stream.py data/get.json
+```
+
+
 <details>
   <summary>License and Copyright</summary>
 
