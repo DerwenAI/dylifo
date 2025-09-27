@@ -25,6 +25,13 @@ parameters, etc.
 If you're not running locally, be sure to set the `OPENAI_API_KEY`
 environment variable.
 
+For the interactive demo, you need to pull the latest Docker container
+for Senzing:
+
+```bash
+docker pull senzing/serve-grpc:latest
+```
+
 
 ## demo
 
@@ -35,6 +42,13 @@ poetry run python3 demo.py data/get.json
 ```
 
 For an interactive UI based on [`Streamlit`](https://streamlit.io/):
+first launch this container and have it running in the background:
+
+```bash
+docker run -it --publish 8261:8261 --rm senzing/serve-grpc
+```
+
+Then run:
 
 ```bash
 poetry run streamlit run stream.py data/get.json
