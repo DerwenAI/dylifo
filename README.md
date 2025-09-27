@@ -39,14 +39,30 @@ For an interactive UI based on [`Streamlit`](https://streamlit.io/):
 ```bash
 poetry run streamlit run stream.py data/get.json
 ```
+---
 
+![](./docs/assets/summary.png)
+
+---
 
 <details>
   <summary>License and Copyright</summary>
 
-Source code for **Dylifo** plus its logo, documentation, and examples
-have an [MIT license](https://spdx.org/licenses/MIT.html) which is
-succinct and simplifies use in commercial applications.
+Source code for **Dylifo** plus logo, documentation, and examples have
+an [MIT license](https://spdx.org/licenses/MIT.html) which is succinct
+and simplifies use in commercial applications.
 
 All materials herein are Copyright © 2025 Senzing, Inc.
 </details>
+Kudos to 
+[@brianmacy](https://github.com/brianmacy),
+[@jbutcher21](https://github.com/jbutcher21),
+[@docktermj](https://github.com/docktermj),
+[@cj2001](https://github.com/cj2001),
+and the kind folks at [GraphGeeks](https://graphgeeks.org/) for their support.
+</details>
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=derwenai/dylifo&type=Date)](https://star-history.com/#derwenai/dylifo&Date)
