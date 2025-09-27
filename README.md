@@ -54,6 +54,7 @@ and simplifies use in commercial applications.
 
 All materials herein are Copyright © 2025 Senzing, Inc.
 </details>
+
 Kudos to 
 [@brianmacy](https://github.com/brianmacy),
 [@jbutcher21](https://github.com/jbutcher21),
