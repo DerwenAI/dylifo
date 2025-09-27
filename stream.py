@@ -65,11 +65,16 @@ if __name__ == "__main__":
 
         rows.append(row)
 
-    st.write(
+    st.dataframe(
         pd.DataFrame([
             row.model_dump()
             for row in rows
         ])
     )
 
-    st.write("token usage:", str(predict.get_lm_usage()))
+    usage: dict = predict.get_lm_usage()
+    expand = st.expander("token usage:", icon=":material/info:")
+    if len(usage) < 1:
+        expand.write("cached")
+    else:
+        expand.json(usage)

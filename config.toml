@@ -1,6 +1,6 @@
 [dspy]
     
-run_local = false
+run_local = true
 
 lm_name = "ollama/gpt-oss:20b"
 #lm_name = "ollama_chat/deepseek-r1:8b"
