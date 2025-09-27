@@ -11,6 +11,7 @@ Describe the `match_key` values, instead of referencing them directly, based on:
  `DOB` is their "date of birth"
  `DRLIC` is their "driver's license number"
  `EMAIL` is their "email"
+ `PHONE` is their "telephone number"
  `SURNAME` is their "surname"
 
 For example, "Bob Jones and Mary Smith have an address in common from the CUSTOMERS dataset."
