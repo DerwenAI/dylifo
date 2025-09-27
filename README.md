@@ -1,9 +1,9 @@
 # dylifo
 
-DSPy summary of Senzing ER results
+Streamlit demo using DSPy to summarize JSON from the Senzing SDK.
 
 
-## set up
+## Set Up
 
 This library uses [`poetry`](https://python-poetry.org/docs/) for
 package management, and first you need to install it. Then run:
@@ -19,7 +19,7 @@ models you wish to use, for example:
 ollama pull gpt-oss:20b
 ```
 
-If you're not running locally, set the configurate parameter
+If you're not running locally, set the configuration parameter
 `run_local` false and be sure to set the `OPENAI_API_KEY` environment
 variable to your key.
 
@@ -35,7 +35,7 @@ docker pull senzing/serve-grpc:latest
 ```
 
 
-## demo
+## Run Demo
 
 Run the `demo.py` script with one of the JSON data files, for example:
 
