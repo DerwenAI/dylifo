@@ -19,11 +19,20 @@ models you wish to use, for example:
 ollama pull gpt-oss:20b
 ```
 
-Modify the `config.toml` configuration file to change models, adjust
-parameters, etc.
+If you're not running locally, set the configurate parameter
+`run_local` false and be sure to set the `OPENAI_API_KEY` environment
+variable to your key.
 
-If you're not running locally, be sure to set the `OPENAI_API_KEY`
-environment variable.
+Otherwise modify the `config.toml` configuration file to change
+models, adjust parameters, etc.
+
+
+To prepare for the interactive demo, first pull the latest Docker
+container for Senzing:
+
+```bash
+docker pull senzing/serve-grpc:latest
+```
 
 
 ## demo
@@ -34,11 +43,22 @@ Run the `demo.py` script with one of the JSON data files, for example:
 poetry run python3 demo.py data/get.json
 ```
 
+
 For an interactive UI based on [`Streamlit`](https://streamlit.io/):
+first launch this container and have it running in the background:
+
+```bash
+docker run -it --publish 8261:8261 --rm senzing/serve-grpc
+```
+
+Then run:
 
 ```bash
 poetry run streamlit run stream.py data/get.json
 ```
+
+Restart the container each time before re-running the Streamlit demo.
+
 ---
 
 ![](./docs/assets/summary.png)
@@ -54,6 +74,7 @@ and simplifies use in commercial applications.
 
 All materials herein are Copyright © 2025 Senzing, Inc.
 </details>
+
 Kudos to 
 [@brianmacy](https://github.com/brianmacy),
 [@jbutcher21](https://github.com/jbutcher21),

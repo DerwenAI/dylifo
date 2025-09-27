@@ -1,6 +1,14 @@
+[sz]
+
+grpc_server = "localhost:8261"
+
+
 [dspy]
     
 run_local = true
+api_base = "http://localhost:11434"
+temperature = 0.0
+max_tokens = 50000
 
 lm_name = "ollama/gpt-oss:20b"
 #lm_name = "ollama_chat/deepseek-r1:8b"
@@ -8,8 +16,3 @@ lm_name = "ollama/gpt-oss:20b"
 #lm_name = "ollama_chat/gemma3:12b"
 #lm_name = "ollama_chat/phi4-reasoning"
 #lm_name = "ollama_chat/llama3:latest"
-
-api_base = "http://localhost:11434"
-temperature = 0.0
-max_tokens = 50000
-
