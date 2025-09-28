@@ -3,6 +3,8 @@
 
 """
 Example using DSPy to summarize Senzing JSON.
+
+see copyright/license https://github.com/DerwenAI/dylifo/README.md
 """
 
 import asyncio

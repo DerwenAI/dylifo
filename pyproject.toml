@@ -1,7 +1,7 @@
 [project]
 
 name = "dylifo"
-version = "0.4.0"
+version = "0.5.0"
 description = "Streamlit demo using DSPy to summarize JSON from the Senzing SDK"
 
 authors = [
@@ -14,7 +14,6 @@ readme = "README.md"
 requires-python = ">=3.11,<3.14"
 
 dependencies = [
-    "senzing-grpc (==0.5.11)",
     "sz-semantics (>=1.0.2,<2.0.0)",
 
     "dspy (>=3.0.3,<4.0.0)",
