@@ -54,7 +54,7 @@ docker run -it --publish 8261:8261 --rm senzing/serve-grpc
 Then run:
 
 ```bash
-poetry run streamlit run stream.py data/get.json
+poetry run streamlit run stream.py
 ```
 
 Restart the container each time before re-running the Streamlit demo.

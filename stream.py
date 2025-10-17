@@ -114,6 +114,9 @@ then summarize.
             if row.data_source in sz_mask.tokens:
                 row.data_source = sz_mask.tokens[row.data_source]
 
+            if row.record_id in sz_mask.tokens:
+                row.record_id = sz_mask.tokens[row.record_id]
+
             rows.append(row)
 
         st.dataframe(
