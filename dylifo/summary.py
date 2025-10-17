@@ -20,7 +20,7 @@ class EntitySourceRow (BaseModel):
     entity_id: int
     person: str
     data_source: str
-    match_key: str
+    record_id: str
 
 
 class ExtractSources (dspy.Signature):
