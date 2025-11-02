@@ -1,7 +1,7 @@
 [project]
 
 name = "dylifo"
-version = "0.5.1"
+version = "0.6.0"
 description = "Streamlit demo using DSPy to summarize JSON from the Senzing SDK"
 
 authors = [
@@ -14,15 +14,18 @@ readme = "README.md"
 requires-python = ">=3.11,<3.14"
 
 dependencies = [
-    "sz-semantics (>=1.0.2,<2.0.0)",
+    # Senzing entity resolution
+    "sz-semantics (>=1.2.3,<2.0.0)",
 
+    # DSPy context engineering
     "dspy (>=3.0.3,<4.0.0)",
-    "mlflow (>=3.3.2,<4.0.0)",
     "pydantic (>=2.11.7,<3.0.0)",
     "w3lib (>=2.3.1,<3.0.0)",
 
+    # Streamlit UI
     "streamlit (>=1.50.0,<2.0.0)",
 
+    # observability, instrumentation
     "icecream (>=2.1.7,<3.0.0)",
     "pyinstrument (>=5.1.1,<6.0.0)",
     "psutil (>=7.1.0,<8.0.0)",

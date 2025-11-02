@@ -19,7 +19,6 @@ from dylifo import Profile, SummaryModule
 from icecream import ic
 from sz_semantics import Mask
 import dspy
-import mlflow
 
 
 #async def main (
@@ -50,8 +49,6 @@ Main entry point
 
     ######################################################################
     ## call the LLM-based parts
-    mlflow.dspy.autolog()
-
     for data_path in data_paths:
         with open(pathlib.Path(data_path), "r", encoding = "utf-8") as fp:
             dat: typing.Any = json.load(fp)
